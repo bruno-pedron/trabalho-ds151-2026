@@ -1,10 +1,20 @@
-# Especificação do Trabalho Prático Final: Desenvolvimento de Aplicação Mobile
+# Welcome to your Expo app 👋
 
-**Equipe:** 2 a 3 alunos
+This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
 
-## IMPORTANTE
+## Get started
 
-**Adicionem o login do professor (@alexkutzke) no repositório github da equipe, para que o acompanhamento dos commits e do desenvolvimento possa ocorrer.**
+1. Install dependencies
+
+   ```bash
+   npm install/ npm ci
+   ```
+
+2. Start the app
+
+   ```bash
+   npx expo start
+   ```
 
 ## 1. Visão Geral e Escopo do Projeto
 
@@ -80,5 +90,3 @@ No dia de apresentação, as equipes terão **15 a 20 minutos** com o professor.
 | **III. Integrações Nativas** | Implementação robusta e com tratamento de permissões de pelo menos 2 recursos nativos integrados ao fluxo do aplicativo. | **15 pts** |
 | **IV. Engenharia e Versionamento** | Histórico de commits consistente ao longo das 4 semanas, mensagens adequadas, comprovação de trabalho em equipe no repositório. | **15 pts** |
 | **V. Defesa** | (*Nota individual*) Domínio sobre o código-fonte desenvolvido, clareza técnica na resposta às perguntas do professor durante a arguição. | **25 pts** |
-
-
