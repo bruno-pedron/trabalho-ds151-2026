@@ -16,6 +16,7 @@
 Sempre que houver mudança estrutural no banco:
 
 1. Atualizar o arquivo `supabase/schema.sql`.
-2. Registrar no commit a alteração de banco (ex.: `feat(db): adiciona coluna x em expenses`).
+2. Atualizar o arquivo `supabase/rls.sql` quando houver ajuste em permissões/policies de segurança.
+3. Registrar no commit a alteração de banco (ex.: `feat(db): adiciona coluna x em expenses`).
 
 Assim, toda a equipe sabe exatamente qual SQL foi aplicado no Supabase.
