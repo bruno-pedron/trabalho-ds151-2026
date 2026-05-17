@@ -20,6 +20,7 @@ export default function Login() {
   const styles = StyleSheet.create({
     titulo: {
       fontSize: 26,
+      lineHeight: 30,
       marginBottom: "5%",
       marginTop: "20%"
     },
