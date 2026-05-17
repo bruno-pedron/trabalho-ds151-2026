@@ -1,21 +1,16 @@
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { useThemeColor } from '@/hooks/use-theme-color';
-import { router } from 'expo-router';
 import { Pressable, StyleSheet, Text, TextInput } from 'react-native';
 
 
-export default function Login() {
+export default function Cadastro() {
 
   const backgroundColor = useThemeColor({}, 'background');
   const textColor = useThemeColor({}, "text")
 
 
   const submit = () => { };
-
-  const toCadastro = () => {
-    router.push("/cadastro")
-  };
 
   const styles = StyleSheet.create({
     titulo: {
@@ -52,9 +47,19 @@ export default function Login() {
       alignItems: 'center',
       gap: 10,
     }}>
-      <ThemedText style={styles.titulo}>faça login para continuar</ThemedText>
+      <ThemedText style={styles.titulo}>Cadastre - se</ThemedText>
       <TextInput
-        placeholder='Usuario'
+        placeholder='Nome de Usuário'
+        placeholderTextColor={textColor}
+        style={styles.input}
+      />
+      <TextInput
+        placeholder='Email'
+        placeholderTextColor={textColor}
+        style={styles.input}
+      />
+      <TextInput
+        placeholder='Número de Telefone'
         placeholderTextColor={textColor}
         style={styles.input}
       />
@@ -64,10 +69,7 @@ export default function Login() {
         style={styles.input}
       />
       <Pressable onPress={submit} style={styles.button}>
-        <Text style={{ color: textColor }}> ENVIAR </Text>
-      </Pressable>
-      <Pressable onPress={toCadastro} style={styles.button}>
-        <Text style={{ color: textColor }}> CADASTRE-SE </Text>
+        <Text style={{ color: textColor }}> CADASTRAR </Text>
       </Pressable>
 
     </ThemedView>
