@@ -30,7 +30,7 @@ export default function Login() {
       return;
     }
 
-    router.replace('/' as never);
+    router.navigate('/groups');
   };
 
   const toCadastro = () => {
