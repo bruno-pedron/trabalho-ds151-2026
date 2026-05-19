@@ -1,7 +1,7 @@
 # Fluxo recomendado no app
 
-1. Usuário cria conta via Supabase Auth.
-2. Após cadastro/login, app cria/atualiza perfil na tabela `users` com `id = auth.uid()`.
+1. Usuário cria conta via Supabase Auth enviando o nome em `options.data.name`.
+2. O trigger `trg_handle_new_user` cria automaticamente o perfil na tabela `users`.
 3. Ao criar grupo, inserir em `groups` com `created_by = auth.uid()`.
 4. O trigger do banco adiciona automaticamente o criador em `group_members` como `owner`.
 5. Para convidar participantes, o dono do grupo insere usuários em `group_members`.
