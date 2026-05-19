@@ -15,6 +15,31 @@ create table if not exists public.users (
   created_at timestamptz not null default now()
 );
 
+-- Trigger automatico: quando um usuario e criado no Supabase Auth,
+-- cria tambem o perfil correspondente em public.users.
+-- O campo name vem de options.data.name no supabase.auth.signUp().
+create or replace function public.handle_new_user()
+returns trigger
+language plpgsql
+security definer
+set search_path = ''
+as $$
+begin
+  insert into public.users (id, name)
+  values (new.id, new.raw_user_meta_data ->> 'name')
+  on conflict (id) do update
+    set name = coalesce(excluded.name, public.users.name);
+
+  return new;
+end;
+$$;
+
+drop trigger if exists trg_handle_new_user on auth.users;
+create trigger trg_handle_new_user
+after insert on auth.users
+for each row
+execute function public.handle_new_user();
+
 -- 2) Groups table
 -- Armazena os grupos de despesas (República, Churrasco, Viagem, etc)
 -- id: gerado aleatoriamente com gen_random_uuid() (precisa de pgcrypto)
