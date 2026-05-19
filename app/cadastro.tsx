@@ -1,16 +1,44 @@
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { useThemeColor } from '@/hooks/use-theme-color';
-import { Pressable, StyleSheet, Text, TextInput } from 'react-native';
+import { router } from 'expo-router';
+import { useState } from 'react';
+import { Alert, Pressable, StyleSheet, Text, TextInput } from 'react-native';
+import { createClient } from '@supabase/supabase-js';
 
+const supabaseUrl = process.env.EXPO_PUBLIC_SUPABASE_URL!;
+const supabaseKey = process.env.EXPO_PUBLIC_SUPABASE_PUBLISHABLE!;
+
+const supabase = createClient(supabaseUrl, supabaseKey);
 
 export default function Cadastro() {
+
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [senha, setSenha] = useState('');
 
   const backgroundColor = useThemeColor({}, 'background');
   const textColor = useThemeColor({}, "text")
 
+  const submit = async () => {
+    const { error } = await supabase.auth.signUp({
+      email: email.trim(),
+      password: senha,
+      options: {
+        data: {
+          name: name.trim()
+        },
+      },
+    });
 
-  const submit = () => { };
+    if (error) {
+      Alert.alert('Erro no cadastro', error.message);
+      return;
+    }
+
+    Alert.alert('Cadastro realizado', 'Agora voce pode fazer login.');
+    router.replace('/login');
+  };
 
   const styles = StyleSheet.create({
     titulo: {
@@ -47,32 +75,35 @@ export default function Cadastro() {
       flex: 1,
       alignItems: 'center',
       gap: 10,
-    }}>
+      }}>
       <ThemedText style={styles.titulo}>Cadastre - se</ThemedText>
       <TextInput
-        placeholder='Nome de Usuário'
+        onChangeText={setName}
+        placeholder='Nome de Usuario'
         placeholderTextColor={textColor}
         style={styles.input}
+        value={name}
       />
       <TextInput
+        autoCapitalize='none'
+        keyboardType='email-address'
+        onChangeText={setEmail}
         placeholder='Email'
         placeholderTextColor={textColor}
         style={styles.input}
+        value={email}
       />
       <TextInput
-        placeholder='Número de Telefone'
-        placeholderTextColor={textColor}
-        style={styles.input}
-      />
-      <TextInput
+        onChangeText={setSenha}
         placeholder='Senha'
         placeholderTextColor={textColor}
+        secureTextEntry
         style={styles.input}
+        value={senha}
       />
       <Pressable onPress={submit} style={styles.button}>
         <Text style={{ color: textColor }}> CADASTRAR </Text>
       </Pressable>
-
     </ThemedView>
   );
 };
