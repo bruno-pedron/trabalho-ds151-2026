@@ -2,11 +2,7 @@ import { router } from 'expo-router';
 import { createClient } from '@supabase/supabase-js';
 import { Alert, Pressable, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-
-const supabaseUrl = process.env.EXPO_PUBLIC_SUPABASE_URL!;
-const supabaseKey = process.env.EXPO_PUBLIC_SUPABASE_PUBLISHABLE!;
-
-const supabase = createClient(supabaseUrl, supabaseKey);
+import { supabase } from '@/supabase/supabase';
 
 export default function ProfileScreen() {
   const logout = async () => {
