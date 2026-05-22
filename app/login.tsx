@@ -4,12 +4,7 @@ import { useThemeColor } from '@/hooks/use-theme-color';
 import { router } from 'expo-router';
 import { useState } from 'react';
 import { Alert, Pressable, StyleSheet, Text, TextInput } from 'react-native';
-import { createClient } from '@supabase/supabase-js';
-
-const supabaseUrl = process.env.EXPO_PUBLIC_SUPABASE_URL!;
-const supabaseKey = process.env.EXPO_PUBLIC_SUPABASE_PUBLISHABLE!;
-
-const supabase = createClient(supabaseUrl, supabaseKey);
+import { supabase } from '@/supabase/supabase';
 
 export default function Login() {
 
@@ -29,8 +24,9 @@ export default function Login() {
       Alert.alert('Erro no login', error.message);
       return;
     }
+    else Alert.alert('login bem sucedido');
 
-    router.navigate('/groups');
+    router.replace('/groups');
   };
 
   const toCadastro = () => {
@@ -45,6 +41,7 @@ export default function Login() {
       marginTop: "20%"
     },
     input: {
+      color: textColor,
       borderColor: "#ffffff",
       borderWidth: 2,
       borderRadius: 5,

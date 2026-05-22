@@ -4,12 +4,7 @@ import { useThemeColor } from '@/hooks/use-theme-color';
 import { router } from 'expo-router';
 import { useState } from 'react';
 import { Alert, Pressable, StyleSheet, Text, TextInput } from 'react-native';
-import { createClient } from '@supabase/supabase-js';
-
-const supabaseUrl = process.env.EXPO_PUBLIC_SUPABASE_URL!;
-const supabaseKey = process.env.EXPO_PUBLIC_SUPABASE_PUBLISHABLE!;
-
-const supabase = createClient(supabaseUrl, supabaseKey);
+import { supabase } from '@/supabase/supabase';
 
 export default function Cadastro() {
 
@@ -48,6 +43,7 @@ export default function Cadastro() {
       marginTop: "20%"
     },
     input: {
+      color: textColor,
       borderColor: "#ffffff",
       borderWidth: 2,
       borderRadius: 5,
@@ -75,7 +71,7 @@ export default function Cadastro() {
       flex: 1,
       alignItems: 'center',
       gap: 10,
-      }}>
+    }}>
       <ThemedText style={styles.titulo}>Cadastre - se</ThemedText>
       <TextInput
         onChangeText={setName}
