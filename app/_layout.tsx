@@ -8,6 +8,7 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { AuthProvider } from '@/contexts/AuthContext';
 import { useAuth } from '@/hooks/useAuth';
 import { useEffect } from 'react';
+import { ActivityIndicator } from 'react-native';
 
 function RootLayoutNav() {
   const { session, isLoading } = useAuth();
@@ -16,6 +17,7 @@ function RootLayoutNav() {
   const colorScheme = useColorScheme();
 
   useEffect(() => {
+
     if (isLoading) return;
 
     const inLogin = segments[0] === 'login';
@@ -27,6 +29,8 @@ function RootLayoutNav() {
       router.replace('/(tabs)/profile')
     }
   }, [session, isLoading, segments]);
+
+  if (isLoading) return <ActivityIndicator />
 
   return (
     <SafeAreaProvider>
