@@ -12,14 +12,37 @@ export default function ProfileScreen() {
   const currentUser = session?.user;
 
   const logout = async () => {
-    const { error } = await supabase.auth.signOut();
+    Alert.alert(
+      'Sair da Conta',
+      'Tem certeza que quer sair?',
+      [
+        {
+          text: 'Cancelar',
+          onPress: () => {
 
-    if (error) {
-      Alert.alert('Erro ao sair', error.message);
-      return;
-    }
+          },
+          style: "cancel"
+        },
+        {
+          text: "Sair",
+          onPress: async () => {
 
-    router.replace('/login');
+            console.log("passoudo return")
+
+            const { error } = await supabase.auth.signOut();
+
+            if (error) {
+              Alert.alert('Erro ao sair', error.message);
+              return;
+            }
+
+            router.replace('/login');
+          },
+          style: "destructive"
+        }
+      ]
+    )
+
   };
 
   return (
