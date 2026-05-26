@@ -19,13 +19,18 @@ export default function ProfileScreen() {
   const [usuario, setUsuario] = useState(null as Tables<'users'> | null)
 
   useEffect(() => {
-    (async () => {
-      const { data, error } = await supabase.from("users")
-        .select("*")
-        .eq("id", currentUser?.id)
-        .single();
-      setUsuario(data)
-    })
+    (
+      async () => {
+        const { data, error } = await supabase.from('users')
+          .select('*')
+          .eq('id', currentUser?.id)
+          .single();
+
+        if (error) console.error("erro ao buscar: ", error.message)
+
+        console.log(data);
+        setUsuario(data);
+      })();
   }, [currentUser])
 
   const backgroundColor = useThemeColor({}, 'background');
@@ -69,7 +74,7 @@ export default function ProfileScreen() {
         <ThemedText>Perfil</ThemedText>
         <ThemedText>
           Dados do usuário:
-          {usuario ? usuario.name : ""}
+          {usuario ? usuario.name : "carregando..."}
         </ThemedText>
         <Pressable onPress={logout} style={styles.button}>
           <Text style={{ color: textColor }}>Sair</Text>
