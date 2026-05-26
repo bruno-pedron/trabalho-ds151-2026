@@ -4,12 +4,32 @@ import { Alert, Pressable, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { supabase } from '@/supabase/supabase';
 import { useAuth } from '@/hooks/useAuth';
+import { ThemedView } from '@/components/themed-view';
+import { ThemedText } from '@/components/themed-text';
+import { useThemeColor } from '@/hooks/use-theme-color';
+import { useEffect, useState } from 'react';
+import { Database, Tables } from '@/database.types';
 
 export default function ProfileScreen() {
 
   const { session } = useAuth();
   //usuário da authenticação possui tudo em auth.users
   const currentUser = session?.user;
+
+  const [usuario, setUsuario] = useState(null as Tables<'users'> | null)
+
+  useEffect(() => {
+    (async () => {
+      const { data, error } = await supabase.from("users")
+        .select("*")
+        .eq("id", currentUser?.id)
+        .single();
+      setUsuario(data)
+    })
+  }, [currentUser])
+
+  const backgroundColor = useThemeColor({}, 'background');
+  const textColor = useThemeColor({}, "text")
 
   const logout = async () => {
     Alert.alert(
@@ -26,8 +46,6 @@ export default function ProfileScreen() {
         {
           text: "Sair",
           onPress: async () => {
-
-            console.log("passoudo return")
 
             const { error } = await supabase.auth.signOut();
 
@@ -46,20 +64,25 @@ export default function ProfileScreen() {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <ThemedView style={styles.container}>
       <View style={styles.content}>
-        <Text>Perfil</Text>
+        <ThemedText>Perfil</ThemedText>
+        <ThemedText>
+          Dados do usuário:
+          {usuario ? usuario.name : ""}
+        </ThemedText>
         <Pressable onPress={logout} style={styles.button}>
-          <Text style={styles.buttonText}>Sair</Text>
+          <Text style={{ color: textColor }}>Sair</Text>
         </Pressable>
       </View>
-    </SafeAreaView>
+    </ThemedView>
   )
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    alignItems: "center"
   },
   content: {
     alignItems: 'center',
@@ -73,8 +96,5 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     paddingHorizontal: 16,
     paddingVertical: 8,
-  },
-  buttonText: {
-    color: '#111111',
   },
 });
