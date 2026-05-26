@@ -4,12 +4,39 @@ import { Alert, Pressable, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { supabase } from '@/supabase/supabase';
 import { useAuth } from '@/hooks/useAuth';
+import { ThemedView } from '@/components/themed-view';
+import { ThemedText } from '@/components/themed-text';
+import { useThemeColor } from '@/hooks/use-theme-color';
+import { useEffect, useState } from 'react';
+import { Database, Tables } from '@/database.types';
 
 export default function ProfileScreen() {
 
   const { session } = useAuth();
   //usuário da authenticação possui tudo em auth.users
   const currentUser = session?.user;
+
+  const [usuario, setUsuario] = useState(null as Tables<'users'> | null)
+  const [loggingOut, setLoggingOut] = useState(false);
+
+  useEffect(() => {
+    if (loggingOut) return;
+    (
+      async () => {
+        const { data, error } = await supabase.from('users')
+          .select('*')
+          .eq('id', currentUser?.id)
+          .single();
+
+        if (error) console.error("erro ao buscar: ", error.message)
+
+        console.log(data);
+        setUsuario(data);
+      })();
+  }, [currentUser])
+
+  const backgroundColor = useThemeColor({}, 'background');
+  const textColor = useThemeColor({}, "text")
 
   const logout = async () => {
     Alert.alert(
@@ -26,8 +53,7 @@ export default function ProfileScreen() {
         {
           text: "Sair",
           onPress: async () => {
-
-            console.log("passoudo return")
+            setLoggingOut(true);
 
             const { error } = await supabase.auth.signOut();
 
@@ -46,20 +72,30 @@ export default function ProfileScreen() {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <ThemedView style={styles.container}>
       <View style={styles.content}>
-        <Text>Perfil</Text>
+        <ThemedText style={styles.titulo}>Perfil</ThemedText>
+        <ThemedText> Dados do usuário </ThemedText>
+        <ThemedText> nome de usuario: {usuario ? usuario.name : "carregando..."} </ThemedText>
+        <ThemedText> email: {currentUser ? currentUser.email : "carregando..."} </ThemedText>
         <Pressable onPress={logout} style={styles.button}>
-          <Text style={styles.buttonText}>Sair</Text>
+          <Text >Sair</Text>
         </Pressable>
       </View>
-    </SafeAreaView>
+    </ThemedView>
   )
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    alignItems: "center"
+  },
+  titulo: {
+    fontSize: 26,
+    lineHeight: 30,
+    marginBottom: "5%",
+    marginTop: "20%"
   },
   content: {
     alignItems: 'center',
@@ -67,14 +103,11 @@ const styles = StyleSheet.create({
     paddingTop: 40,
   },
   button: {
-    backgroundColor: '#dddddd',
-    borderColor: '#888888',
-    borderRadius: 4,
-    borderWidth: 1,
+    borderColor: "#2020aa",
+    backgroundColor: "#8099ff",
+    borderRadius: 5,
+    borderWidth: 2,
     paddingHorizontal: 16,
     paddingVertical: 8,
-  },
-  buttonText: {
-    color: '#111111',
   },
 });
