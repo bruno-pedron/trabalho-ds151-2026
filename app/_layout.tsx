@@ -20,7 +20,7 @@ function RootLayoutNav() {
 
     if (isLoading) return;
 
-    const inLogin = segments[0] === 'login';
+    const inLogin = segments[0] === 'login' || segments[0] === 'cadastro';
 
     if (!session && !inLogin) {
       router.replace('/login');
