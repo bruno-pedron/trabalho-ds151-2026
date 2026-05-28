@@ -22,7 +22,7 @@ export async function createGroup(
 
   const { error: memberError } = await supabase
     .from('group_members')
-    .insert({
+    .upsert({
       group_id: group.id,
       user_id: userId,
       role: 'owner',
