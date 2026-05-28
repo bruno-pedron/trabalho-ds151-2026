@@ -80,3 +80,17 @@ export async function updateGroup(
 
   return data
 }
+
+export async function deleteGroup(
+  groupId: string
+) {
+
+  const { error } = await supabase
+    .from('groups')
+    .delete()
+    .eq('id', groupId);
+
+  if (error) {
+    throw error;
+  }
+}

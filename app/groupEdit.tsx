@@ -9,7 +9,10 @@ import {
   Button,
   StyleSheet,
   ActivityIndicator,
+  Alert
 } from 'react-native';
+
+import { deleteGroup } from '@/services/groups';
 
 import { useLocalSearchParams, router } from 'expo-router';
 
@@ -51,6 +54,48 @@ export default function EditGroupScreen() {
     }
   }
 
+  async function handleDeleteGroup() {
+
+    if (!groupId) {
+      return;
+    }
+
+    Alert.alert(
+      'Excluir grupo',
+      'Tem certeza que deseja excluir este grupo?',
+      [
+        {
+          text: 'Cancelar',
+          style: 'cancel',
+        },
+        {
+          text: 'Excluir',
+          style: 'destructive',
+          onPress: async () => {
+
+            try {
+
+              await deleteGroup(
+                String(groupId)
+              );
+
+              router.replace('/(tabs)/groups');
+
+            } catch (err) {
+
+              console.error(err);
+
+              Alert.alert(
+                'Erro',
+                'Não foi possível excluir o grupo.'
+              );
+            }
+          },
+        },
+      ]
+    );
+  }
+
   return (
     <SafeAreaView style={styles.container}>
 
@@ -81,8 +126,15 @@ export default function EditGroupScreen() {
             title="Salvar Alterações"
             onPress={handleSave}
           />
+          
         )
       }
+    
+    <Button
+      title="Excluir Grupo"
+      color="red"
+      onPress={handleDeleteGroup}
+    />
 
     </SafeAreaView>
   );
