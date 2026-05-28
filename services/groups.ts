@@ -59,3 +59,24 @@ export async function getUserGroups(
 
   return data
 }
+
+export async function updateGroup(
+  groupId: string,
+  newName: string
+) {
+
+  const { data, error } = await supabase
+    .from('groups')
+    .update({
+      name: newName
+    })
+    .eq('id', groupId)
+    .select()
+    .single()
+
+  if (error) {
+    throw error
+  }
+
+  return data
+}

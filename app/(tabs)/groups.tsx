@@ -136,6 +136,16 @@ export default function GroupsScreen() {
     //router.push(`/groups/${groupId}`);
   }
 
+  function handleEditGroup(groupId: string) {
+
+  router.push({
+  pathname: '/groupEdit',
+  params: {
+    groupId: groupId,
+  },
+});
+}
+
   useEffect(() => {
 
     loadGroups();
@@ -200,12 +210,7 @@ export default function GroupsScreen() {
         refreshing={loading}
         renderItem={({ item }) => (
 
-          <TouchableOpacity
-            style={styles.groupCard}
-            onPress={() =>
-              handleOpenGroup(item.groups.id)
-            }
-          >
+          <View style={styles.groupCard}>
 
             <Text style={styles.groupName}>
               {item.groups.name}
@@ -215,7 +220,29 @@ export default function GroupsScreen() {
               Cargo: {item.role}
             </Text>
 
-          </TouchableOpacity>
+            <View style={styles.groupButtons}>
+
+              <View style={styles.buttonContainer}>
+                <Button
+                  title="Abrir"
+                  onPress={() =>
+                    handleOpenGroup(item.groups.id)
+                  }
+                />
+              </View>
+
+              <View style={styles.buttonContainer}>
+                <Button
+                  title="Editar"
+                  onPress={() =>
+                    handleEditGroup(item.groups.id)
+                  }
+                />
+              </View>
+
+            </View>
+
+          </View>
         )}
         ListEmptyComponent={
           !loading ? (
@@ -287,21 +314,36 @@ const styles = StyleSheet.create({
   },
 
   groupCard: {
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 8,
-    padding: 16,
-    marginBottom: 12,
-  },
+  width: '100%',
+  borderWidth: 1,
+  borderColor: '#ccc',
+  borderRadius: 12,
+  padding: 16,
+  marginBottom: 16,
+  backgroundColor: '#fff',
+},
 
   groupName: {
     fontSize: 18,
     fontWeight: 'bold',
+    marginBottom: 4,
   },
 
   groupRole: {
-    marginTop: 4,
+    fontSize: 14,
     color: '#666',
+    marginBottom: 16,
   },
+
+  groupButtons: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    gap: 12,
+  },
+
+  buttonContainer: {
+    flex: 1,
+  },
+  
 
 });
