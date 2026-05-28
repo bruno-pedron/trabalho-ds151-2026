@@ -35,3 +35,27 @@ export async function createGroup(
 
   return group
 }
+
+export async function getUserGroups(
+  userId: string
+) {
+
+  const { data, error } = await supabase
+    .from('group_members')
+    .select(`
+      role,
+      groups (
+        id,
+        name,
+        created_by,
+        created_at
+      )
+    `)
+    .eq('user_id', userId)
+
+  if (error) {
+    throw error
+  }
+
+  return data
+}
