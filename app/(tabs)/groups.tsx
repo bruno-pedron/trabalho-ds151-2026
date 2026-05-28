@@ -32,6 +32,9 @@ export default function GroupsScreen() {
 
   const [loading, setLoading] = useState(false);
 
+  const [creatingGroup, setCreatingGroup] =
+    useState(false);
+
   const [errorMessage, setErrorMessage] =
     useState('');
 
@@ -89,7 +92,7 @@ export default function GroupsScreen() {
 
     try {
 
-      setLoading(true);
+      setCreatingGroup(true);
 
       setErrorMessage('');
 
@@ -99,12 +102,18 @@ export default function GroupsScreen() {
       );
 
       console.log(
+        'GROUP CREATED:',
         JSON.stringify(createdGroup, null, 2)
       );
 
       setGroupName('');
 
-      await loadGroups();
+      const updatedGroups =
+        await getUserGroups(
+          session.user.id
+        );
+
+      setGroups(updatedGroups || []);
 
     } catch (err) {
 
@@ -118,7 +127,7 @@ export default function GroupsScreen() {
 
     } finally {
 
-      setLoading(false);
+      setCreatingGroup(false);
     }
   }
 
@@ -162,16 +171,26 @@ export default function GroupsScreen() {
         onChangeText={setGroupName}
       />
 
-      <Button
-        title="Criar Grupo"
-        onPress={handleCreateGroup}
-      />
+      {
+        creatingGroup
+          ? (
+            <ActivityIndicator size="small" />
+          )
+          : (
+            <Button
+              title="Criar Grupo"
+              onPress={handleCreateGroup}
+            />
+          )
+      }
 
-      {errorMessage ? (
-        <Text style={styles.errorText}>
-          {errorMessage}
-        </Text>
-      ) : null}
+      {
+        errorMessage ? (
+          <Text style={styles.errorText}>
+            {errorMessage}
+          </Text>
+        ) : null
+      }
 
       <FlatList
         style={styles.list}
@@ -200,10 +219,10 @@ export default function GroupsScreen() {
         )}
         ListEmptyComponent={
           !loading ? (
-            <Text>
-              Nenhum grupo encontrado
+            <Text style={styles.emptyText}>
+              Você ainda não participa de nenhum grupo.
             </Text>
-          ) : null
+          ): null
         }
       />
 
@@ -235,11 +254,21 @@ const styles = StyleSheet.create({
     color: 'red',
     fontSize: 16,
     textAlign: 'center',
+    marginTop: 10,
+    marginBottom: 10,
+  },
+
+  emptyText: {
+    textAlign: 'center',
+    marginTop: 30,
+    fontSize: 16,
+    color: '#666',
   },
 
   title: {
     fontSize: 24,
     marginTop: 20,
+    marginBottom: 20,
   },
 
   input: {
@@ -249,6 +278,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     padding: 10,
     fontSize: 16,
+    marginBottom: 12,
   },
 
   list: {
