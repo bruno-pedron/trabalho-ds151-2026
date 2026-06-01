@@ -94,3 +94,23 @@ export async function deleteGroup(
     throw error;
   }
 }
+
+export async function getGroupMembers(groupId: string) {
+  const { data, error } = await supabase
+    .from('group_members')
+    .select(`
+      role,
+      joined_at,
+      users (
+        id,
+        name
+      )
+    `)
+    .eq('group_id', groupId);
+
+  if (error) {
+    throw error;
+  }
+
+  return data;
+}

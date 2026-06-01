@@ -132,8 +132,7 @@ export default function GroupsScreen() {
   }
 
   function handleOpenGroup(groupId: string) {
-    console.log("Adicionar link para a rota do stack do grupo aqui.")
-    //router.push(`/groups/${groupId}`);
+    router.push(`/groups/${groupId}/members`);
   }
 
   function handleEditGroup(groupId: string) {
