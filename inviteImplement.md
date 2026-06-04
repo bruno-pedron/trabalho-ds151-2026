@@ -2,13 +2,13 @@
 
 Este documento detalha o passo a passo para implementar o sistema de convites de grupos, cobrindo a passagem de ID, geração de códigos e o compartilhamento.
 
-## 1. Banco de Dados e Geração de Código 
+## 1. Banco de Dados e Geração de Código ✅
  - **Alteração de Schema:** Adicionar a coluna `invite_code` (única) na tabela `groups` em `supabase/schema.sql`. ✅
  - **Geração:** Ao criar um novo grupo (via app ou trigger no Supabase), gerar um código alfanumérico curto (ex: 6 a 8 caracteres) e salvar na coluna `invite_code`. Isso facilita o compartilhamento verbal ou digitação manual em comparação ao UUID longo. ✅
 - **Serviços:** 
   - Atualizar os tipos em `database.types.ts`. ✅
-  - Adicionar em `services/groups.ts` uma função para buscar os dados de um grupo (nome e código de convite) pelo `groupId`.
-  - Criar função `joinGroup(inviteCode)` para vincular um usuário autenticado ao grupo (tabela `group_members`).
+  - Adicionar em `services/groups.ts` uma função para buscar os dados de um grupo (nome e código de convite) pelo `groupId`. ✅
+  - Criar função `joinGroup(inviteCode)` para vincular um usuário autenticado ao grupo (tabela `group_members`). ✅
 
 ## 2. Tela de Convite (`app/groups/[groupId]/invite.tsx`)
 - **Rota e Estado:** O `groupId` já é recuperado da rota (`useLocalSearchParams`). Usar esse ID para carregar o nome do grupo e seu respectivo `invite_code` do backend.
