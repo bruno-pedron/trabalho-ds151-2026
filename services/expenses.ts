@@ -56,3 +56,30 @@ export async function getGroupExpenses(
 
   return data;
 }
+
+export async function getExpenseById(
+  expenseId: string
+) {
+
+  const { data, error } = await supabase
+    .from('expenses')
+    .select(`
+      id,
+      description,
+      amount,
+      receipt_url,
+      created_at,
+      users (
+        id,
+        name
+      )
+    `)
+    .eq('id', expenseId)
+    .single();
+
+  if (error) {
+    throw error;
+  }
+
+  return data;
+}

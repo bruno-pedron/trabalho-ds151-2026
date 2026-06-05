@@ -11,6 +11,7 @@ export default function GroupExpenses() {
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
 
+
   async function loadExpenses() {
 
     if (!groupId) {
@@ -44,17 +45,17 @@ export default function GroupExpenses() {
   }
 
   function handleExpenseDetails(
-    expenseId: string
-  ) {
-
-    console.log(
-      'Abrir detalhes da despesa:',
-      expenseId
-    );
-
-    console.log("Abrir detalhe da despesa aqui");
-    //inserir aqui
-  }
+        expenseId: string
+        ) {
+        router.push({
+            pathname:
+            '/groups/[group_id]/expenses/[expense_id]',
+            params: {
+            group_id: String(groupId),
+            expense_id: expenseId,
+            },
+        });
+    }
 
   useEffect(() => {
 
