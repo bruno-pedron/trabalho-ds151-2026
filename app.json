@@ -40,21 +40,7 @@
           }
         }
       ],
-      "expo-secure-store",
-      "expo-sharing",
-        {
-          "ios": {
-            "enabled": true,
-            "activationRule": {
-              "supportsImageWithMaxCount": 5
-            }
-          },
-          "android": {
-            "enabled": true,
-            "singleShareMimeTypes": ["image/*"],
-            "multipleShareMimeTypes": ["image/*"]
-          }
-        }
+      "expo-secure-store"
     ],
     "experiments": {
       "typedRoutes": true,

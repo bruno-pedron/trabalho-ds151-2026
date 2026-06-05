@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, FlatList, ActivityIndicator, StyleSheet, TouchableOpacity } from 'react-native';
-import { useLocalSearchParams, Stack } from 'expo-router';
+import { useLocalSearchParams, Stack, router } from 'expo-router';
 import { getGroupMembers } from '@/services/groups';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -54,7 +54,7 @@ export default function GroupMembersScreen() {
           headerBackTitle: 'Voltar',
           // Placeholder para ação futura de adicionar membro no cabeçalho
           headerRight: () => (
-            <TouchableOpacity onPress={() => console.log('Ação de add membro no futuro')}>
+            <TouchableOpacity onPress={() => router.push(`/groups/${groupId}/invite`)}>
               <Text style={styles.headerAction}>+ Add</Text>
             </TouchableOpacity>
           )
