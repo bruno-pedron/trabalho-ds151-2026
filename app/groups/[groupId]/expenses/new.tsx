@@ -1,5 +1,6 @@
-import { useState } from 'react';
-import { Text, TextInput, Button, StyleSheet, ActivityIndicator } from 'react-native';
+import { useState, useRef } from 'react';
+import { Text, TextInput, Button, StyleSheet, ActivityIndicator, View, TouchableOpacity } from 'react-native';
+import { CameraView, useCameraPermissions } from 'expo-camera';
 import { useLocalSearchParams, router } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useAuth } from '@/hooks/useAuth';
@@ -13,6 +14,43 @@ export default function NewExpenseScreen() {
   const [amount, setAmount] = useState('');
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+  const [isCameraOpen, setIsCameraOpen] = useState(false);
+  const [fotoUri, setFotoUri] = useState<string | null>(null);
+
+  const cameraRef = useRef<any>(null);
+  const [cameraPermission, requestCameraPermission] = useCameraPermissions();
+
+  const handleAbrirCamera = async () => {
+    if (!cameraPermission?.granted) {
+      const permission = await requestCameraPermission();
+      if (!permission.granted) return;
+    }
+    setIsCameraOpen(true);
+  };
+
+  const handleTirarFoto = async () => {
+    if (cameraRef.current) {
+      const fotoData = await cameraRef.current.takePictureAsync();
+      setFotoUri(fotoData.uri);
+      setIsCameraOpen(false);
+    }
+  };
+
+  if (isCameraOpen) {
+    return (
+      <View style={styles.container}>
+        <CameraView style={StyleSheet.absoluteFill} ref={cameraRef} />
+        <View style={styles.cameraOverlay}>
+          <TouchableOpacity style={styles.btnCapturar} onPress={handleTirarFoto}>
+            <Text style={styles.btnText}>Capturar</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.btnCancelar} onPress={() => setIsCameraOpen(false)}>
+            <Text style={styles.btnText}>Cancelar</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+    );
+  }
 
   async function handleCreateExpense() {
 
@@ -48,7 +86,7 @@ export default function NewExpenseScreen() {
         session.user.id,
         description.trim(),
         Number(amount),
-        undefined,
+        fotoUri || undefined,
       );
 
       router.replace({
@@ -94,6 +132,13 @@ export default function NewExpenseScreen() {
         onChangeText={setAmount}
       />
 
+      <Button
+        title="Adicionar Foto Recibo"
+        onPress={
+          handleAbrirCamera
+        }
+      />
+
       {
         errorMessage ? (
           <Text style={styles.errorText}>
@@ -129,6 +174,10 @@ const styles = StyleSheet.create({
     gap: 20,
   },
 
+  cameraOverlay: { flex: 1, justifyContent: 'space-evenly', paddingBottom: 40, flexDirection: 'row', alignItems: 'flex-end' },
+  btnCapturar: { backgroundColor: '#28a745', padding: 15, borderRadius: 30 },
+  btnCancelar: { backgroundColor: '#dc3545', padding: 15, borderRadius: 30 },
+  btnText: { color: '#fff', fontWeight: 'bold' },
   title: {
     fontSize: 24,
     fontWeight: 'bold',
