@@ -43,11 +43,13 @@ execute function public.handle_new_user();
 -- 2) Groups table
 -- Armazena os grupos de despesas (República, Churrasco, Viagem, etc)
 -- id: gerado aleatoriamente com gen_random_uuid() (precisa de pgcrypto)
+-- invite_code: código único para convite gerado aleatoriamente
 -- created_by: referência ao usuário que criou o grupo
 -- on delete restrict: não permite deletar usuário se ele criou grupos (segurança)
 create table if not exists public.groups (
   id uuid primary key default gen_random_uuid(),
   name text not null,
+  invite_code text unique,
   created_by uuid not null references public.users (id) on delete restrict,
   created_at timestamptz not null default now()
 );
@@ -125,8 +127,39 @@ after insert on public.groups
 for each row
 execute function public.add_group_creator_as_owner();
 
--- RLS (Row Level Security) e policies serão implementados em uma etapa futura.
--- Quando implementado, garantirá que:
--- - Usuário vê só dados de grupos aos quais pertence
--- - Usuário só edita/deleta suas próprias despesas
--- - Dono do grupo controla membros
+-- Função para gerar um código de convite alfanumérico único de 6 caracteres
+create or replace function public.set_group_invite_code()
+returns trigger
+language plpgsql
+as $$
+declare
+  chars text := 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+  new_code text := '';
+  i integer;
+  code_exists boolean;
+begin
+  if new.invite_code is null then
+    loop
+      new_code := '';
+      for i in 1..6 loop
+        new_code := new_code || substr(chars, floor(random() * length(chars) + 1)::integer, 1);
+      end loop;
+      
+      select exists(select 1 from public.groups where invite_code = new_code) into code_exists;
+      
+      if not code_exists then
+        exit;
+      end if;
+    end loop;
+    new.invite_code := new_code;
+  end if;
+  return new;
+end;
+$$;
+
+-- Trigger executado ANTES de inserir o grupo para preencher o invite_code
+drop trigger if exists trg_set_group_invite_code on public.groups;
+create trigger trg_set_group_invite_code
+before insert on public.groups
+for each row
+execute function public.set_group_invite_code();

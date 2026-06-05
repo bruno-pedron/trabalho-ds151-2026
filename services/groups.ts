@@ -114,3 +114,53 @@ export async function getGroupMembers(groupId: string) {
 
   return data;
 }
+
+export async function getGroupDetails(groupId: string) {
+  const { data, error } = await supabase
+    .from('groups')
+    .select(`
+      name,
+      invite_code
+    `)
+    .eq('id', groupId)
+    .single()
+
+  if (error){
+    throw error;
+  }
+
+  return data
+}
+ 
+export async function joinGroup(inviteCode: string, userId: string) {
+  //busca o grupo pelo código de convite
+  const { data: group, error: groupError } = await supabase
+    .from('groups')
+    .select('id')
+    .eq('invite_code', inviteCode)
+    .single();
+
+  if (groupError) {
+    throw new Error('Código de convite inválido ou grupo não encontrado.');
+  }
+
+  //adiciona o usuário ao grupo
+  const { data, error } = await supabase
+    .from('group_members')
+    .insert({
+      group_id: group.id,
+      user_id: userId,
+      role: 'member'
+    })
+    .select()
+    .single();
+  
+  if (error){
+    if (error.code === '23505') {
+      throw new Error('Você já está neste grupo.');
+    }
+    throw error;
+  }
+
+  return data
+}
