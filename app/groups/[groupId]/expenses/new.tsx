@@ -7,7 +7,7 @@ import { createExpense } from '@/services/expenses';
 
 export default function NewExpenseScreen() {
 
-  const { group_id } = useLocalSearchParams();
+  const { groupId } = useLocalSearchParams();
   const { session } = useAuth();
   const [description, setDescription] = useState('');
   const [amount, setAmount] = useState('');
@@ -16,7 +16,7 @@ export default function NewExpenseScreen() {
 
   async function handleCreateExpense() {
 
-    if (!group_id) {
+    if (!groupId) {
       setErrorMessage('Grupo inválido.');
       return;
     }
@@ -44,7 +44,7 @@ export default function NewExpenseScreen() {
       setErrorMessage('');
 
       await createExpense(
-        String(group_id),
+        String(groupId),
         session.user.id,
         description.trim(),
         Number(amount),

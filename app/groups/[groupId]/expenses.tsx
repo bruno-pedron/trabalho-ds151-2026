@@ -45,14 +45,14 @@ export default function GroupExpenses() {
   }
 
   function handleExpenseDetails(
-        expenseId: string
+        expense_id: string
         ) {
-        router.push({
+        router.replace({
             pathname:
-            '/groups/[group_id]/expenses/[expense_id]',
+            '/groups/[groupId]/expenses/[expense_id]',
             params: {
-            group_id: String(groupId),
-            expense_id: expenseId,
+            groupId: String(groupId),
+            expense_id: expense_id,
             },
         });
     }

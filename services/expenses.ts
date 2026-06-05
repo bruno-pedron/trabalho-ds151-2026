@@ -69,6 +69,7 @@ export async function getExpenseById(
       amount,
       receipt_url,
       created_at,
+      paid_by,
       users (
         id,
         name
@@ -82,4 +83,41 @@ export async function getExpenseById(
   }
 
   return data;
+}
+
+export async function updateExpense(
+  expenseId: string,
+  description: string,
+  amount: number
+) {
+
+  const { data, error } = await supabase
+    .from('expenses')
+    .update({
+      description,
+      amount
+    })
+    .eq('id', expenseId)
+    .select()
+    .single();
+
+  if (error) {
+    throw error;
+  }
+
+  return data;
+}
+
+export async function deleteExpense(
+  expenseId: string
+) {
+
+  const { error } = await supabase
+    .from('expenses')
+    .delete()
+    .eq('id', expenseId);
+
+  if (error) {
+    throw error;
+  }
 }

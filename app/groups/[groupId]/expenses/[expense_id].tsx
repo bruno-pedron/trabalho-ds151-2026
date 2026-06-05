@@ -6,7 +6,7 @@ import { getExpenseById } from '@/services/expenses';
 
 export default function ExpenseDetailsScreen() {
 
-  const {group_id, expense_id} = useLocalSearchParams();
+  const {groupId, expense_id} = useLocalSearchParams();
   const [expense, setExpense] = useState<any>(null);
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
@@ -45,27 +45,27 @@ export default function ExpenseDetailsScreen() {
 
   function handleEditExpense() {
 
-    console.log(
-      'Editar despesa:',
-      expense_id
-    );
+  router.replace({
+    pathname:
+      '/groups/[groupId]/expenses/[expense_id]/edit',
 
-    //implementar issue #41
-  }
-
-  function handleDeleteExpense() {
-
-    console.log(
-      'Excluir despesa:',
-      expense_id
-    );
-
-    //implementar issue #41
-  }
+    params: {
+      groupId: String(groupId),
+      expense_id: String(expense_id),
+    },
+  });
+}
 
   function handleBack() {
 
-    router.back();
+    router.replace({
+    pathname:
+      '/groups/[groupId]/expenses',
+
+    params: {
+      groupId: String(groupId)
+    },
+  });
   }
 
   useEffect(() => {
@@ -177,15 +177,6 @@ export default function ExpenseDetailsScreen() {
           title="Editar"
           onPress={
             handleEditExpense
-          }
-        />
-      </View>
-
-      <View style={styles.buttonContainer}>
-        <Button
-          title="Excluir"
-          onPress={
-            handleDeleteExpense
           }
         />
       </View>
