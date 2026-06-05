@@ -51,7 +51,14 @@ export default function NewExpenseScreen() {
         undefined,
       );
 
-      router.back();
+      router.replace({
+        pathname:
+          '/groups/[groupId]/expenses',
+
+        params: {
+          groupId: String(groupId)
+        },
+      });
 
     } catch (err) {
 

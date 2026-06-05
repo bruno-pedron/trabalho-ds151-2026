@@ -57,6 +57,18 @@ export default function GroupExpenses() {
         });
     }
 
+    function handleExpenseNew(
+        expense_id: string
+        ) {
+        router.replace({
+            pathname:
+            '/groups/[groupId]/expenses/new',
+            params: {
+            groupId: String(groupId)
+            },
+        });
+    }
+
   useEffect(() => {
 
     loadExpenses();
@@ -99,6 +111,13 @@ export default function GroupExpenses() {
       <Text style={styles.title}>
         Despesas do Grupo
       </Text>
+
+      <Button
+        title="Criar Despesa"
+        onPress={() =>
+        handleExpenseNew(groupId)
+        }
+    />
 
       {
         errorMessage ? (
