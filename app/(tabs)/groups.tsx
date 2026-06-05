@@ -145,6 +145,10 @@ export default function GroupsScreen() {
 });
 }
 
+  function handleOpenGroupExpenses(groupId: string) {
+    router.push(`/groups/${groupId}/expenses`);
+  }
+
   useEffect(() => {
 
     loadGroups();
@@ -223,9 +227,18 @@ export default function GroupsScreen() {
 
               <View style={styles.buttonContainer}>
                 <Button
-                  title="Abrir"
+                  title="Membros"
                   onPress={() =>
                     handleOpenGroup(item.groups.id)
+                  }
+                />
+              </View>
+
+              <View style={styles.buttonContainer}>
+                <Button
+                  title="Despesas"
+                  onPress={() =>
+                    handleOpenGroupExpenses(item.groups.id)
                   }
                 />
               </View>

@@ -27,3 +27,32 @@ export async function createExpense(
 
   return data;
 }
+
+export async function getGroupExpenses(
+  groupId: string
+) {
+  const { data, error } = await supabase
+    .from('expenses')
+    .select(`
+      id,
+      description,
+      amount,
+      receipt_url,
+      created_at,
+      paid_by,
+      users (
+        id,
+        name
+      )
+    `)
+    .eq('group_id', groupId)
+    .order('created_at', {
+      ascending: false
+    });
+
+  if (error) {
+    throw error;
+  }
+
+  return data;
+}
