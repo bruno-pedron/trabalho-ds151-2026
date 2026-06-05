@@ -101,18 +101,21 @@ export type Database = {
           created_by: string
           id: string
           name: string
+          invite_code: string | null
         }
         Insert: {
           created_at?: string
           created_by: string
           id?: string
           name: string
+          invite_code?: string | null
         }
         Update: {
           created_at?: string
           created_by?: string
           id?: string
           name?: string
+          invite_code?: string | null
         }
         Relationships: [
           {
