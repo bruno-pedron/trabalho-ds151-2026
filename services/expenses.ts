@@ -2,6 +2,7 @@ import { Tables } from '@/database.types';
 import { supabase } from '@/supabase/supabase';
 import * as FileSystem from 'expo-file-system/legacy';
 import { decode } from 'base64-arraybuffer';
+import { User } from '@supabase/supabase-js';
 
 export async function createExpense(
   groupId: string,
@@ -73,6 +74,38 @@ export async function getUserExpenses(userId: string): Promise<Tables<'expenses'
     throw error;
   }
   return data;
+}
+
+export interface UserGroupExpenses {
+  user: Tables<'users'>;
+  userExpensesOnGroup: Tables<'expenses'>[];
+  totalCost: number;
+}
+export async function getUserGroupExpenses(userId: string, groupId: string): Promise<UserGroupExpenses | null> {
+  const { data, error } = await supabase
+    .from('expenses')
+    .select(`
+      id,
+      group_id,
+      paid_by,
+      amount,
+      description,
+      receipt_url,
+      created_at,
+      user:users!paid_by(*)
+    `)
+    .eq('paid_by', userId)
+    .eq('group_id', groupId)
+
+  if (error) throw error;
+  if (!data || data.length === 0) return null;
+
+  return ({
+    user: (data[0].user[0]) as Tables<'users'>,
+    userExpensesOnGroup: data as Tables<'expenses'>[],
+    totalCost: data.reduce((sum, item) => sum + (Number(item.amount) + 0), 0)
+  });
+
 }
 
 export async function getExpenseById(
