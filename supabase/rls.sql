@@ -211,3 +211,44 @@ using (paid_by = auth.uid());
 -- grant select, insert, update, delete on public.groups to authenticated;
 -- grant select, insert, update, delete on public.group_members to authenticated;
 -- grant select, insert, update, delete on public.expenses to authenticated;
+
+-- =====================================================
+-- 8) STORAGE policies (Receipts Bucket)
+-- =====================================================
+
+-- Habilita RLS na tabela de objetos do Storage (caso não esteja)
+-- alter table storage.objects enable row level security;
+
+-- Permite leitura de arquivos do bucket 'receipts' apenas para usuários autenticados
+drop policy if exists "Authenticated users can view receipts" on storage.objects;
+create policy "Authenticated users can view receipts"
+on storage.objects
+for select
+to authenticated
+using (bucket_id = 'receipts');
+
+-- Permite upload de arquivos no bucket 'receipts' apenas para usuários autenticados
+drop policy if exists "Authenticated users can upload receipts" on storage.objects;
+create policy "Authenticated users can upload receipts"
+on storage.objects
+for insert
+to authenticated
+with check (bucket_id = 'receipts');
+
+-- Permite atualização do próprio arquivo no bucket 'receipts'
+drop policy if exists "Users can update their own receipts" on storage.objects;
+create policy "Users can update their own receipts"
+on storage.objects
+for update
+to authenticated
+using (bucket_id = 'receipts' and auth.uid() = owner)
+with check (bucket_id = 'receipts' and auth.uid() = owner);
+
+-- Permite exclusão do próprio arquivo no bucket 'receipts'
+drop policy if exists "Users can delete their own receipts" on storage.objects;
+create policy "Users can delete their own receipts"
+on storage.objects
+for delete
+to authenticated
+using (bucket_id = 'receipts' and auth.uid() = owner);
+
