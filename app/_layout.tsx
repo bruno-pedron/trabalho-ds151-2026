@@ -8,7 +8,7 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { AuthProvider } from '@/contexts/AuthContext';
 import { useAuth } from '@/hooks/useAuth';
 import { useEffect } from 'react';
-import { ActivityIndicator } from 'react-native';
+import { ActivityIndicator, Keyboard, TouchableWithoutFeedback, View } from 'react-native';
 
 function RootLayoutNav() {
   const { session, isLoading } = useAuth();
@@ -35,11 +35,15 @@ function RootLayoutNav() {
   return (
     <SafeAreaProvider>
       <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-        <Stack>
-          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-          <Stack.Screen name="modal" options={{ presentation: 'modal', title: 'Modal' }} />
-          <Stack.Screen name="login" options={{ presentation: 'formSheet', title: 'login' }} />
-        </Stack>
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+          <View style={{ flex: 1 }}>
+            <Stack>
+              <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+              <Stack.Screen name="modal" options={{ presentation: 'modal', title: 'Modal' }} />
+              <Stack.Screen name="login" options={{ presentation: 'formSheet', title: 'login' }} />
+            </Stack>
+          </View>
+        </TouchableWithoutFeedback>
         <StatusBar style="auto" />
       </ThemeProvider>
     </SafeAreaProvider>

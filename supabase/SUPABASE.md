@@ -9,7 +9,17 @@
    - `group_id` do grupo
    - `paid_by = auth.uid()`
    - `amount`, `description`
-   - `receipt_url` (URL pública do recibo no Storage, quando houver)
+   - `receipt_url` (Caminho do recibo no Storage, ex: `public/nome_arquivo.jpg`, quando houver)
+
+## Storage (Armazenamento de Recibos)
+
+O app utiliza o Supabase Storage para guardar as fotos dos recibos:
+- **Bucket:** `receipts`
+- **Visibilidade:** Privado (Private)
+- **Segurança (RLS):** 
+  - Somente usuários **autenticados** podem visualizar e fazer upload de arquivos no bucket `receipts`.
+  - Apenas o dono do arquivo (quem enviou) pode alterar ou excluir o recibo.
+- **Acesso no Frontend:** Como o bucket é privado, o app não deve tentar usar `getPublicUrl`. Para exibir a imagem, o ideal é usar `supabase.storage.from('receipts').createSignedUrl('caminho_do_arquivo', 60)` para gerar uma URL temporária ou fazer o download do arquivo autenticado.
 
 ## Versionamento obrigatório
 
