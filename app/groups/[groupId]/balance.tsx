@@ -22,28 +22,34 @@ export default function GroupBalance() {
 
 
   async function loadExpenses() {
-
-    if (groupId) {
-      return;
-    }
+    if (!groupId) return;
 
     try {
       setLoading(true);
       setErrorMessage('');
 
-      setGroupMembers(await getUsersByGroup(groupId));
-      groupMembers.forEach(async (m) => {
-        let userExpenses = await getUserGroupExpenses(m.id, groupId);
-        if (userExpenses !== null) {
-          expensesByUser.push(userExpenses);
-          setExpensesByUser(() => expensesByUser)
-        }
+      const members = await getUsersByGroup(groupId);
+      if (!members) {
+        setGroupMembers([]);
+        setExpensesByUser([]);
+        return;
+      }
+      setGroupMembers(members);
+
+      const fetchExpensesPromises = members.map(async (m) => {
+        const userExpenses = await getUserGroupExpenses(m.id, groupId);
+        return userExpenses; // This could be UserGroupExpenses or null
       });
+
+      const resolvedExpenses = await Promise.all(fetchExpensesPromises);
+      const validExpenses = resolvedExpenses.filter(
+        (e): e is UserGroupExpenses => e !== null
+      );
+      setExpensesByUser(validExpenses);
 
     } catch (err) {
       console.error(err);
       setErrorMessage('Não foi possível carregar as despesas. Verifique sua conexão e tente novamente.');
-
     } finally {
       setLoading(false);
     }
@@ -71,8 +77,17 @@ export default function GroupBalance() {
   return (
     <SafeAreaView style={styles.container} >
 
-      <ThemedText style={styles.title}>
-        Suas despesas
+      <ThemedText >
+        {(() => {
+          let members: string = "";
+          groupMembers.forEach((m) => {
+            members = members.concat(m.name!)
+          })
+          members = members.concat(" hi ");
+          return members
+        })()}
+
+
       </ThemedText>
 
 
@@ -104,7 +119,7 @@ export default function GroupBalance() {
             </ThemedText>
 
             <ThemedText style={styles.expenseDate} >
-              {Number(item.userExpensesOnGroup.length)} despesas
+              {`${item.userExpensesOnGroup.length} ${item.userExpensesOnGroup.length === 1 ? "despesa" : "despesas"}`}
             </ThemedText>
           </ThemedView>
 
