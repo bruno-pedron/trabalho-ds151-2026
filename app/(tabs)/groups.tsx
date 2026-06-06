@@ -137,16 +137,20 @@ export default function GroupsScreen() {
 
   function handleEditGroup(groupId: string) {
 
-  router.push({
-  pathname: '/groupEdit',
-  params: {
-    groupId: groupId,
-  },
-});
-}
+    router.push({
+      pathname: '/groupEdit',
+      params: {
+        groupId: groupId,
+      },
+    });
+  }
 
   function handleOpenGroupExpenses(groupId: string) {
     router.push(`/groups/${groupId}/expenses`);
+  }
+
+  function handleOpenBalanco(groupId: string) {
+    router.push(`/groups/${groupId}/balance`);
   }
 
   useEffect(() => {
@@ -252,6 +256,15 @@ export default function GroupsScreen() {
                 />
               </View>
 
+              <View style={styles.buttonContainer}>
+                <Button
+                  title="Balanço"
+                  onPress={() =>
+                    handleOpenBalanco(item.groups.id)
+                  }
+                />
+              </View>
+
             </View>
 
           </View>
@@ -261,7 +274,7 @@ export default function GroupsScreen() {
             <Text style={styles.emptyText}>
               Você ainda não participa de nenhum grupo.
             </Text>
-          ): null
+          ) : null
         }
       />
 
@@ -326,14 +339,14 @@ const styles = StyleSheet.create({
   },
 
   groupCard: {
-  width: '100%',
-  borderWidth: 1,
-  borderColor: '#ccc',
-  borderRadius: 12,
-  padding: 16,
-  marginBottom: 16,
-  backgroundColor: '#fff',
-},
+    width: '100%',
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 16,
+    backgroundColor: '#fff',
+  },
 
   groupName: {
     fontSize: 18,
@@ -356,6 +369,6 @@ const styles = StyleSheet.create({
   buttonContainer: {
     flex: 1,
   },
-  
+
 
 });

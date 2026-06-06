@@ -92,7 +92,7 @@ export async function getUserGroupExpenses(userId: string, groupId: string): Pro
       description,
       receipt_url,
       created_at,
-      user:users!paid_by(*)
+      user:users(*)
     `)
     .eq('paid_by', userId)
     .eq('group_id', groupId)
@@ -101,7 +101,7 @@ export async function getUserGroupExpenses(userId: string, groupId: string): Pro
   if (!data || data.length === 0) return null;
 
   return ({
-    user: (data[0].user[0]) as Tables<'users'>,
+    user: (data[0].user) as unknown as Tables<'users'>,
     userExpensesOnGroup: data as Tables<'expenses'>[],
     totalCost: data.reduce((sum, item) => sum + (Number(item.amount) + 0), 0)
   });
