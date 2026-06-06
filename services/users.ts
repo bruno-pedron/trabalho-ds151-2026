@@ -36,6 +36,18 @@ export async function getUser(userId: string): Promise<Tables<"users">> {
   return data
 }
 
+export async function getUsersByGroup(groupId: string): Promise<Tables<"users">[]> {
+
+  const { data, error } = await supabase
+    .from('users')
+    .select('*, group_members!inner(group_id)')
+    .eq('group_members.group_id', groupId)
+
+  if (error) throw error
+
+  return data as Tables<'users'>[]
+}
+
 export async function updateUser(userId: string, newName: string): Promise<Tables<"users">> {
 
   const { data, error } = await supabase
