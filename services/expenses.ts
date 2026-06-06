@@ -1,3 +1,4 @@
+import { Tables } from '@/database.types';
 import { supabase } from '@/supabase/supabase';
 
 export async function createExpense(
@@ -23,7 +24,7 @@ export async function createExpense(
   if (error) {
     console.log("failed at creating the expense");
     throw error
-  } 
+  }
 
   return data;
 }
@@ -54,6 +55,21 @@ export async function getGroupExpenses(
     throw error;
   }
 
+  return data;
+}
+
+export async function getUserExpenses(userId: string): Promise<Tables<'expenses'>[]> {
+  const { data, error } = await supabase
+    .from('expenses')
+    .select('*')
+    .eq('paid_by', userId)
+    .order('created_at', {
+      ascending: false
+    });
+
+  if (error) {
+    throw error;
+  }
   return data;
 }
 
