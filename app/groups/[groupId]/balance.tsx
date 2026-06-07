@@ -77,20 +77,6 @@ export default function GroupBalance() {
   return (
     <SafeAreaView style={styles.container} >
 
-      <ThemedText >
-        {(() => {
-          let members: string = "";
-          groupMembers.forEach((m) => {
-            members = members.concat(m.name!)
-          })
-          members = members.concat(" hi ");
-          return members
-        })()}
-
-
-      </ThemedText>
-
-
       {errorMessage ? (
         <ThemedText style={styles.errorText} >
           {errorMessage}
