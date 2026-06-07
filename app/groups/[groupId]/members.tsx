@@ -6,38 +6,39 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function GroupMembersScreen() {
   const { groupId } = useLocalSearchParams<{ groupId: string }>();
-  
+
   const [members, setMembers] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    async function loadMembers() {
-      try {
-        setLoading(true);
-        if (!groupId) return;
-        const data = await getGroupMembers(groupId);
-        setMembers(data || []);
-      } catch (error) {
-        console.error("Erro ao buscar membros:", error);
-      } finally {
-        setLoading(false);
-      }
-    }
-
     loadMembers();
   }, [groupId]);
+
+  async function loadMembers() {
+    try {
+      setLoading(true);
+      if (!groupId) return;
+      const data = await getGroupMembers(groupId);
+      setMembers(data || []);
+    } catch (error) {
+      console.error("Erro ao buscar membros:", error);
+    } finally {
+      setLoading(false);
+    }
+  }
+
 
   const renderMemberItem = ({ item }: { item: any }) => {
     // Ajustar baseado no schema exato do usuário retornado
     const userName = item.users?.name || 'Usuário Desconhecido';
-    
+
     return (
       <View style={styles.memberItem}>
         <View>
           <Text style={styles.memberName}>{userName}</Text>
           <Text style={styles.memberRole}>{item.role === 'owner' ? '👑 Administrador' : '👤 Membro'}</Text>
         </View>
-        
+
         {/* Placeholder para ação futura de remover membro */}
         <TouchableOpacity onPress={() => console.log('Ação de remover no futuro')}>
           <Text style={styles.removeAction}>Remover</Text>
@@ -48,8 +49,8 @@ export default function GroupMembersScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <Stack.Screen 
-        options={{ 
+      <Stack.Screen
+        options={{
           title: 'Membros do Grupo',
           headerBackTitle: 'Voltar',
           // Placeholder para ação futura de adicionar membro no cabeçalho
@@ -58,7 +59,7 @@ export default function GroupMembersScreen() {
               <Text style={styles.headerAction}>+ Add</Text>
             </TouchableOpacity>
           )
-        }} 
+        }}
       />
 
       {loading ? (
@@ -67,6 +68,8 @@ export default function GroupMembersScreen() {
         <FlatList
           data={members}
           keyExtractor={(item) => item.users?.id}
+          onRefresh={loadMembers}
+          refreshing={loading}
           renderItem={renderMemberItem}
           ListEmptyComponent={
             <Text style={styles.emptyText}>Nenhum membro encontrado neste grupo.</Text>
