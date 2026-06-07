@@ -1,134 +1,116 @@
 import { useEffect, useState } from 'react';
-
-import {
-  View,
-  Text,
-  Button,
-  StyleSheet,
-  TextInput,
-  FlatList,
-  ActivityIndicator,
-  TouchableOpacity,
-} from 'react-native';
-
+import { View, Text, Button, StyleSheet, TextInput, FlatList, ActivityIndicator, TouchableOpacity, } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-
-import {
-  createGroup,
-  getUserGroups
-} from '@/services/groups';
-
+import { createGroup, getUserGroups, joinGroup } from '@/services/groups';
 import { useAuth } from '@/hooks/useAuth';
-
 import { router } from 'expo-router';
+import { useThemeColor } from '@/hooks/use-theme-color';
 
 export default function GroupsScreen() {
 
   const { session } = useAuth();
 
   const [groupName, setGroupName] = useState('');
-
   const [groups, setGroups] = useState<any[]>([]);
 
+
+  const textColor = useThemeColor({}, "text")
+
   const [loading, setLoading] = useState(false);
-
-  const [creatingGroup, setCreatingGroup] =
-    useState(false);
-
-  const [errorMessage, setErrorMessage] =
-    useState('');
+  const [creatingGroup, setCreatingGroup] = useState(false);
+  const [joiningGroup, setJoiningGroup] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
 
   async function loadGroups() {
 
-    if (!session?.user?.id) {
-      return;
-    }
+    if (!session?.user?.id) return;
 
     try {
-
       setLoading(true);
-
       setErrorMessage('');
 
-      const data = await getUserGroups(
-        session.user.id
-      );
-
+      const data = await getUserGroups(session.user.id);
       setGroups(data || []);
 
     } catch (err) {
-
       console.error(err);
-
-      setErrorMessage(
-        'Não foi possível carregar os grupos. Verifique sua conexão e tente novamente.'
-      );
+      setErrorMessage('Não foi possível carregar os grupos. Verifique sua conexão e tente novamente.');
 
     } finally {
-
       setLoading(false);
+
     }
   }
 
   async function handleCreateGroup() {
 
     if (!session?.user?.id) {
-
-      setErrorMessage(
-        'Usuário não autenticado.'
-      );
-
+      setErrorMessage('Usuário não autenticado.');
       return;
+
     }
-
     if (!groupName.trim()) {
-
-      setErrorMessage(
-        'Digite um nome para o grupo.'
-      );
-
+      setErrorMessage('Digite um nome para o grupo.');
       return;
+
     }
 
     try {
-
       setCreatingGroup(true);
-
       setErrorMessage('');
 
-      const createdGroup = await createGroup(
-        groupName.trim(),
-        session.user.id
-      );
+      const createdGroup = await createGroup(groupName.trim(), session.user.id);
 
-      console.log(
-        'GROUP CREATED:',
-        JSON.stringify(createdGroup, null, 2)
-      );
-
+      console.log('GROUP CREATED:', JSON.stringify(createdGroup, null, 2));
       setGroupName('');
 
-      const updatedGroups =
-        await getUserGroups(
-          session.user.id
-        );
-
+      const updatedGroups = await getUserGroups(session.user.id);
       setGroups(updatedGroups || []);
 
     } catch (err) {
-
-      console.error(
-        JSON.stringify(err, null, 2)
-      );
-
-      setErrorMessage(
-        'Não foi possível criar o grupo. Tente novamente.'
-      );
+      console.error(JSON.stringify(err, null, 2));
+      setErrorMessage('Não foi possível criar o grupo. Tente novamente.');
 
     } finally {
-
       setCreatingGroup(false);
+
     }
+  }
+
+  async function handleJoinGroup() {
+
+    if (!session?.user?.id) {
+      setErrorMessage('Usuário não autenticado.');
+      return;
+
+    }
+    if (!groupName.trim()) {
+      setErrorMessage('Digite um nome para o grupo.');
+      return;
+
+    }
+
+    try {
+      setJoiningGroup(true);
+      setErrorMessage('');
+
+      const joinedGroup = await joinGroup(groupName.trim(), session.user.id);
+
+      console.log('GROUP CREATED:', JSON.stringify(joinedGroup, null, 2));
+      setGroupName('');
+
+      const updatedGroups = await getUserGroups(session.user.id);
+      setGroups(updatedGroups || []);
+
+    } catch (err) {
+      console.error(JSON.stringify(err, null, 2));
+      setErrorMessage('Não foi possível entrar no grupo. Tente novamente.');
+
+    } finally {
+      setJoiningGroup(false);
+
+    }
+
   }
 
   function handleOpenGroup(groupId: string) {
@@ -154,59 +136,52 @@ export default function GroupsScreen() {
   }
 
   useEffect(() => {
-
     loadGroups();
-
   }, [session]);
 
   if (loading && groups.length === 0) {
 
     return (
+
       <SafeAreaView style={styles.loadingContainer}>
-
         <ActivityIndicator size="large" />
-
         <Text style={styles.loadingText}>
           Carregando grupos...
         </Text>
-
       </SafeAreaView>
     );
   }
 
   return (
-    <SafeAreaView style={styles.container}>
 
+    <SafeAreaView style={styles.container}>
       <Text style={styles.title}>
         Meus Grupos
       </Text>
 
       <TextInput
-        style={styles.input}
-        placeholder="Nome do grupo"
+        style={[styles.input, { color: textColor }]}
+        placeholder="Nome ou código de convite do grupo"
+        placeholderTextColor={textColor}
         value={groupName}
         onChangeText={setGroupName}
       />
 
-      {
-        creatingGroup
-          ? (
-            <ActivityIndicator size="small" />
-          )
-          : (
-            <Button
-              title="Criar Grupo"
-              onPress={handleCreateGroup}
-            />
-          )
+      {creatingGroup ?
+        (<ActivityIndicator size="small" />) :
+        (<Button title="Criar Grupo" onPress={handleCreateGroup} />)
       }
 
-      {
-        errorMessage ? (
-          <Text style={styles.errorText}>
-            {errorMessage}
-          </Text>
-        ) : null
+      {joiningGroup ?
+        (<ActivityIndicator size="small" />) :
+        (<Button title="Entrar no Grupo" onPress={handleJoinGroup} />)
+      }
+
+      {errorMessage ? (
+        <Text style={styles.errorText}>
+          {errorMessage}
+        </Text>) :
+        null
       }
 
       <FlatList
@@ -218,7 +193,6 @@ export default function GroupsScreen() {
         renderItem={({ item }) => (
 
           <View style={styles.groupCard}>
-
             <Text style={styles.groupName}>
               {item.groups.name}
             </Text>
@@ -228,53 +202,31 @@ export default function GroupsScreen() {
             </Text>
 
             <View style={styles.groupButtons}>
-
               <View style={styles.buttonContainer}>
-                <Button
-                  title="Membros"
-                  onPress={() =>
-                    handleOpenGroup(item.groups.id)
-                  }
-                />
+                <Button title="Membros" onPress={() => handleOpenGroup(item.groups.id)} />
               </View>
 
               <View style={styles.buttonContainer}>
-                <Button
-                  title="Despesas"
-                  onPress={() =>
-                    handleOpenGroupExpenses(item.groups.id)
-                  }
-                />
+                <Button title="Despesas" onPress={() => handleOpenGroupExpenses(item.groups.id)} />
               </View>
 
               <View style={styles.buttonContainer}>
-                <Button
-                  title="Editar"
-                  onPress={() =>
-                    handleEditGroup(item.groups.id)
-                  }
-                />
+                <Button title="Editar" onPress={() => handleEditGroup(item.groups.id)} />
               </View>
 
               <View style={styles.buttonContainer}>
-                <Button
-                  title="Balanço"
-                  onPress={() =>
-                    handleOpenBalanco(item.groups.id)
-                  }
-                />
+                <Button title="Balanço" onPress={() => handleOpenBalanco(item.groups.id)} />
               </View>
 
             </View>
 
           </View>
         )}
-        ListEmptyComponent={
-          !loading ? (
-            <Text style={styles.emptyText}>
-              Você ainda não participa de nenhum grupo.
-            </Text>
-          ) : null
+        ListEmptyComponent={!loading ?
+          (<Text style={styles.emptyText}>
+            Você ainda não participa de nenhum grupo.
+          </Text>) :
+          null
         }
       />
 
@@ -324,7 +276,7 @@ const styles = StyleSheet.create({
   },
 
   input: {
-    width: '80%',
+    width: '90%',
     borderWidth: 1,
     borderColor: '#999',
     borderRadius: 8,
@@ -361,7 +313,7 @@ const styles = StyleSheet.create({
   },
 
   groupButtons: {
-    flexDirection: 'row',
+    flexDirection: 'column',
     justifyContent: 'space-between',
     gap: 12,
   },

@@ -16,7 +16,7 @@ export async function createGroup(
     .single()
 
   if (error) {
-    console.log("failed at creating the group itself:\nname:",name,"\ncreated_by:",userId);
+    console.log("failed at creating the group itself:\nname:", name, "\ncreated_by:", userId);
     throw error
   }
 
@@ -125,13 +125,13 @@ export async function getGroupDetails(groupId: string) {
     .eq('id', groupId)
     .single()
 
-  if (error){
+  if (error) {
     throw error;
   }
 
   return data
 }
- 
+
 export async function joinGroup(inviteCode: string, userId: string) {
   //busca o grupo pelo código de convite
   const { data: group, error: groupError } = await supabase
@@ -154,8 +154,8 @@ export async function joinGroup(inviteCode: string, userId: string) {
     })
     .select()
     .single();
-  
-  if (error){
+
+  if (error) {
     if (error.code === '23505') {
       throw new Error('Você já está neste grupo.');
     }
