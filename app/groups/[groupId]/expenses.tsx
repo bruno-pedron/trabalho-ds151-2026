@@ -6,7 +6,7 @@ import { getGroupExpenses } from '@/services/expenses';
 
 export default function GroupExpenses() {
 
-  const { groupId } = useLocalSearchParams<{ groupId: string;}>();
+  const { groupId } = useLocalSearchParams<{ groupId: string; }>();
   const [expenses, setExpenses] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
@@ -45,29 +45,29 @@ export default function GroupExpenses() {
   }
 
   function handleExpenseDetails(
-        expense_id: string
-        ) {
-        router.replace({
-            pathname:
-            '/groups/[groupId]/expenses/[expense_id]',
-            params: {
-            groupId: String(groupId),
-            expense_id: expense_id,
-            },
-        });
-    }
+    expense_id: string
+  ) {
+    router.navigate({
+      pathname:
+        '/groups/[groupId]/expenses/[expense_id]',
+      params: {
+        groupId: String(groupId),
+        expense_id: expense_id,
+      },
+    });
+  }
 
-    function handleExpenseNew(
-        expense_id: string
-        ) {
-        router.replace({
-            pathname:
-            '/groups/[groupId]/expenses/new',
-            params: {
-            groupId: String(groupId)
-            },
-        });
-    }
+  function handleExpenseNew(
+    expense_id: string
+  ) {
+    router.navigate({
+      pathname:
+        '/groups/[groupId]/expenses/new',
+      params: {
+        groupId: String(groupId)
+      },
+    });
+  }
 
   useEffect(() => {
 
@@ -115,9 +115,9 @@ export default function GroupExpenses() {
       <Button
         title="Criar Despesa"
         onPress={() =>
-        handleExpenseNew(groupId)
+          handleExpenseNew(groupId)
         }
-    />
+      />
 
       {
         errorMessage ? (
