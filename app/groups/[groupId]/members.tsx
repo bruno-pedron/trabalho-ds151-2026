@@ -3,9 +3,12 @@ import { View, Text, FlatList, ActivityIndicator, StyleSheet, TouchableOpacity }
 import { useLocalSearchParams, Stack, router } from 'expo-router';
 import { getGroupMembers } from '@/services/groups';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useAuth } from '@/hooks/useAuth';
 
 export default function GroupMembersScreen() {
   const { groupId } = useLocalSearchParams<{ groupId: string }>();
+
+  const { session } = useAuth();
 
   const [members, setMembers] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -27,6 +30,13 @@ export default function GroupMembersScreen() {
     }
   }
 
+  function isUserAdmin() {
+    const userId = session?.user.id
+    if (!userId) return false;
+    const currentUserMember = members.find(m => m.users?.id === userId);
+    return currentUserMember?.role === 'owner';
+  }
+
 
   const renderMemberItem = ({ item }: { item: any }) => {
     // Ajustar baseado no schema exato do usuário retornado
@@ -41,7 +51,8 @@ export default function GroupMembersScreen() {
 
         {/* Placeholder para ação futura de remover membro */}
         <TouchableOpacity onPress={() => console.log('Ação de remover no futuro')}>
-          <Text style={styles.removeAction}>Remover</Text>
+          {/*this is WRONG this will only show remove on  the list element that is the onwer*/}
+          {isUserAdmin() ? (<Text style={styles.removeAction}>Remover</Text>) : null}
         </TouchableOpacity>
       </View>
     );
