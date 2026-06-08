@@ -113,8 +113,10 @@ export async function joinGroup(inviteCode: string, userId: string) {
   const { data: group, error: groupError } = await supabase
     .from('groups')
     .select('id')
-    .eq('invite_code', inviteCode)
+    .eq('invite_code', inviteCode.toUpperCase())
     .single();
+
+  if (group == null) return null;
 
   if (groupError) {
     throw new Error('Código de convite inválido ou grupo não encontrado.');
@@ -137,6 +139,7 @@ export async function joinGroup(inviteCode: string, userId: string) {
     }
     throw error;
   }
+  console.log("data:", data)
   return data
 }
 
