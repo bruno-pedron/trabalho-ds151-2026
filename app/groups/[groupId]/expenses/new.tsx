@@ -84,12 +84,14 @@ export default function NewExpenseScreen() {
       return;
     }
 
+    const parsedAmount = Number(amount.replace(',', '.').trim());
+
     if (!description.trim() || !amount.trim()) {
       setErrorMessage('Digite uma descrição e valor para a despesa.');
       return;
     }
 
-    if (Number(amount) <= 0) {
+    if (!Number.isFinite(parsedAmount) || parsedAmount <= 0) {
       setErrorMessage('O valor deve ser maior que zero.');
       return;
     }
@@ -108,7 +110,7 @@ export default function NewExpenseScreen() {
         String(groupId),
         session.user.id,
         description.trim(),
-        Number(amount),
+        parsedAmount,
         uploadedReceiptUrl,
       );
 
