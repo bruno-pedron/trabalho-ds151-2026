@@ -95,6 +95,10 @@ export default function GroupsScreen() {
       setErrorMessage('');
 
       const joinedGroup = await joinGroup(groupName.trim(), session.user.id);
+      if (joinedGroup === null) {
+        setErrorMessage('Grupo não Encontrado. O código está correto?');
+        return;
+      }
 
       console.log('GROUP CREATED:', JSON.stringify(joinedGroup, null, 2));
       setGroupName('');
