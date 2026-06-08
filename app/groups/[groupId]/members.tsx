@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, FlatList, ActivityIndicator, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, FlatList, ActivityIndicator, StyleSheet, TouchableOpacity, Alert } from 'react-native';
 import { useLocalSearchParams, Stack, router } from 'expo-router';
-import { getGroupMembers } from '@/services/groups';
+import { getGroupMembers, removeFromGroup } from '@/services/groups';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useAuth } from '@/hooks/useAuth';
 
@@ -37,6 +37,29 @@ export default function GroupMembersScreen() {
     return currentUserMember?.role === 'owner';
   }
 
+  async function removeUser(userId: string) {
+    Alert.alert(
+      'Remover Usuário?',
+      'Você tem certeza que quer remover esse usuário?',
+      [
+        {
+          text: 'Cancelar',
+          style: "cancel"
+        },
+        {
+          text: "Remover",
+          onPress: async () => {
+            try { await removeFromGroup(groupId, userId) }
+            catch (err) { console.log("erro ao remover do grupo", err) }
+            if (userId === session?.user.id) { router.replace("/(tabs)/groups") }
+            await loadMembers()
+          },
+          style: "destructive"
+        }
+      ]
+    )
+  }
+
 
   const renderMemberItem = ({ item }: { item: any }) => {
     // Ajustar baseado no schema exato do usuário retornado
@@ -49,11 +72,11 @@ export default function GroupMembersScreen() {
           <Text style={styles.memberRole}>{item.role === 'owner' ? '👑 Administrador' : '👤 Membro'}</Text>
         </View>
 
-        {/* Placeholder para ação futura de remover membro */}
-        <TouchableOpacity onPress={() => console.log('Ação de remover no futuro')}>
-          {/*this is WRONG this will only show remove on  the list element that is the onwer*/}
-          {isUserAdmin() ? (<Text style={styles.removeAction}>Remover</Text>) : null}
-        </TouchableOpacity>
+        {(isUserAdmin() || session?.user.id == item.users?.id) ? (
+          <TouchableOpacity onPress={async () => await removeUser(item.users?.id)}>
+            <Text style={styles.removeAction}>Remover</Text>
+          </TouchableOpacity>
+        ) : null}
       </View>
     );
   };
