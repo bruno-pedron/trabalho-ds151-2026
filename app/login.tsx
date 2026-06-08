@@ -5,6 +5,7 @@ import { router } from 'expo-router';
 import { useState } from 'react';
 import { Alert, Modal, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import { supabase } from '@/supabase/supabase';
+import *  as Linking from "expo-linking"
 
 export default function Login() {
 
@@ -40,13 +41,13 @@ export default function Login() {
   const submitEdit = async () => {
     console.log("redefinir senha called");
     try {
-      //não funciona no expo
+      const url = Linking.createURL('/');
       const { data, error } = await supabase.auth.resetPasswordForEmail(inputValue, {
-        /*redirectTo depende do ip do computador rodando expo, ou utiliza uma key padrão definida em app.json como shcema em produção*/
+        redirectTo: url
       });
-      //error ? 
-      Alert.alert("falha na alteração")
-      //: Alert.alert("senha alterada");
+      error ?
+        Alert.alert("falha na alteração")
+        : Alert.alert("senha alterada");
     }
     catch (err) {
       Alert.alert("falha na alteração")
