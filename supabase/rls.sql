@@ -60,13 +60,24 @@ alter table public.expenses enable row level security;
 -- 3) USERS policies
 -- =====================================================
 
--- Usuario autenticado ve e altera somente o proprio perfil.
+-- Usuario autenticado ve o proprio perfil e perfis de usuarios do mesmo grupo.
 -- Insercao so pode acontecer com id = auth.uid().
 drop policy if exists users_select_own on public.users;
 create policy users_select_own
 on public.users
 for select
-using (id = auth.uid());
+to authenticated
+using (
+  id = auth.uid()
+  or exists (
+    select 1
+    from public.group_members gm_me
+    join public.group_members gm_other
+      on gm_other.group_id = gm_me.group_id
+    where gm_me.user_id = auth.uid()
+      and gm_other.user_id = users.id
+  )
+);
 
 drop policy if exists users_insert_own on public.users;
 create policy users_insert_own
