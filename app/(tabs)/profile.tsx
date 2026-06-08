@@ -112,9 +112,11 @@ export default function ProfileScreen() {
     else if (inputType === "email") {
       console.log("changeEmail submitEdit Called");
       try {
-        const { data, error } = await supabase.auth.updateUser({
-          email: inputValue
+        //utiliza uma função sql específica para pular a verificação na hora de alterar o email
+        const { data, error } = await supabase.rpc('force_update_user_email', {
+          new_email: inputValue
         });
+        await supabase.auth.refreshSession();
         error ? Alert.alert("falha na alteração", error.message) :
           Alert.alert("email alterado");
       }
