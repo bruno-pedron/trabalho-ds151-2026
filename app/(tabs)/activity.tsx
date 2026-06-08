@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { View, Text, Button, FlatList, ActivityIndicator, StyleSheet } from 'react-native';
+import { View, Text, Button, FlatList, ActivityIndicator, StyleSheet, Pressable } from 'react-native';
 import { useLocalSearchParams, router } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { getGroupExpenses, getUserExpenses } from '@/services/expenses';
@@ -43,6 +43,19 @@ export default function GroupExpenses() {
     loadExpenses();
   }, [userId]);
 
+  function goToDespesaScreen(expenseId: string, groupId: string) {
+
+    router.navigate({
+      pathname:
+        '/groups/[groupId]/expenses/[expense_id]',
+      params: {
+        groupId: groupId,
+        expense_id: expenseId,
+      },
+    });
+
+  }
+
   if (
     loading &&
     expenses.length === 0
@@ -83,20 +96,25 @@ export default function GroupExpenses() {
         refreshing={loading}
         renderItem={({ item }) => (
 
-          <ThemedView style={styles.expenseCard} >
+          <Pressable onPress={() => { goToDespesaScreen(item.id, item.group_id) }}>
 
-            <ThemedText style={styles.expenseDescription} >
-              {item.description}
-            </ThemedText>
+            <ThemedView style={styles.expenseCard} >
 
-            <ThemedText style={styles.expenseAmount} >
-              R$ {Number(item.amount).toFixed(2)}
-            </ThemedText>
+              <ThemedText style={styles.expenseDescription} >
+                {item.description}
+              </ThemedText>
 
-            <ThemedText style={styles.expenseDate} >
-              {new Date(item.created_at).toLocaleDateString()}
-            </ThemedText>
-          </ThemedView>
+              <ThemedText style={styles.expenseAmount} >
+                R$ {Number(item.amount).toFixed(2)}
+              </ThemedText>
+
+              <ThemedText style={styles.expenseDate} >
+                {new Date(item.created_at).toLocaleDateString()}
+              </ThemedText>
+
+            </ThemedView>
+
+          </Pressable>
 
         )}
         ListEmptyComponent={
