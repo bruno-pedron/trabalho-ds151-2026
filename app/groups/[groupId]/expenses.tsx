@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { View, Text, Button, FlatList, ActivityIndicator, StyleSheet } from 'react-native';
-import { useLocalSearchParams, router } from 'expo-router';
+import { useLocalSearchParams, router, Stack } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { getGroupExpenses } from '@/services/expenses';
 
@@ -107,6 +107,12 @@ export default function GroupExpenses() {
     <SafeAreaView
       style={styles.container}
     >
+      <Stack.Screen
+        options={{
+          title: 'Despesas',
+          headerBackTitle: 'Voltar',
+        }}
+      />
 
       <Text style={styles.title}>
         Despesas do Grupo

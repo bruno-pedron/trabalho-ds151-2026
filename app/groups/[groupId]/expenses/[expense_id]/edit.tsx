@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { Text, Button, StyleSheet, TextInput, ActivityIndicator, Alert, View, Image, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useLocalSearchParams, router } from 'expo-router';
+import { useLocalSearchParams, router, Stack } from 'expo-router';
 import { CameraView, useCameraPermissions } from 'expo-camera';
 import * as ImagePicker from 'expo-image-picker';
 import { Ionicons } from '@expo/vector-icons';
@@ -292,7 +292,12 @@ export default function EditExpenseScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-
+      <Stack.Screen
+        options={{
+          title: 'Editar Despesa',
+          headerBackTitle: 'Voltar',
+        }}
+      />
       <Text style={styles.title}>
         Editar Despesa
       </Text>

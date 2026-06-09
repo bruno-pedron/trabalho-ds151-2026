@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { View, Text, Button, FlatList, ActivityIndicator, StyleSheet } from 'react-native';
-import { useLocalSearchParams, router } from 'expo-router';
+import { useLocalSearchParams, router, Stack } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { getGroupExpenses, getUserExpenses, getUserGroupExpenses, UserGroupExpenses } from '@/services/expenses';
 import { useAuth } from '@/hooks/useAuth';
@@ -76,6 +76,13 @@ export default function GroupBalance() {
 
   return (
     <SafeAreaView style={styles.container} >
+
+      <Stack.Screen
+        options={{
+          title: 'Balanço',
+          headerBackTitle: 'Voltar',
+        }}
+      />
 
       {errorMessage ? (
         <ThemedText style={styles.errorText} >

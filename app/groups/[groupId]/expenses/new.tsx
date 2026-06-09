@@ -2,7 +2,7 @@ import { useState, useRef } from 'react';
 import { Text, TextInput, StyleSheet, ActivityIndicator, View, TouchableOpacity, Image, Button } from 'react-native';
 import { CameraView, useCameraPermissions } from 'expo-camera';
 import * as ImagePicker from 'expo-image-picker';
-import { useLocalSearchParams, router } from 'expo-router';
+import { useLocalSearchParams, router, Stack } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from '@/hooks/useAuth';
@@ -131,6 +131,12 @@ export default function NewExpenseScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
+      <Stack.Screen
+        options={{
+          title: 'Criar Despesa',
+          headerBackTitle: 'Voltar',
+        }}
+      />
       <Text style={styles.title}>
         Nova Despesa
       </Text>
