@@ -87,6 +87,12 @@ export default function ProfileScreen() {
     setEditModalVisible(!editModalVisible);
   }
 
+  const changeSenha = () => {
+    setInputType("senha");
+    setInputValue("");
+    setEditModalVisible(!editModalVisible);
+  }
+
   const submitEdit = async () => {
     if (inputType === "nome") {
       console.log("changeName submitEdit Called");
@@ -106,11 +112,26 @@ export default function ProfileScreen() {
     else if (inputType === "email") {
       console.log("changeEmail submitEdit Called");
       try {
+        //utiliza uma função sql específica para pular a verificação na hora de alterar o email
+        const { data, error } = await supabase.rpc('force_update_user_email', {
+          new_email: inputValue
+        });
+        await supabase.auth.refreshSession();
+        error ? Alert.alert("falha na alteração", error.message) :
+          Alert.alert("email alterado");
+      }
+      catch (err) {
+        Alert.alert("falha na alteração")
+      }
+    }
+    else if (inputType === "senha") {
+      console.log("changeSenha submitEdit Called");
+      try {
         const { data, error } = await supabase.auth.updateUser({
-          email: inputValue
+          password: inputValue
         });
         error ? Alert.alert("falha na alteração", error.message) :
-          Alert.alert("nome alterado");
+          Alert.alert("senha alterada");
       }
       catch (err) {
         Alert.alert("falha na alteração")
@@ -177,8 +198,14 @@ export default function ProfileScreen() {
           </Pressable>
         </View>
 
+
+        <Pressable onPress={changeSenha} style={styles.button}>
+          <Text>alterar senha</Text>
+        </Pressable>
+
         <Pressable onPress={logout} style={styles.button}>
           <Text>Sair</Text>
+
         </Pressable>
       </View>
     </ThemedView>

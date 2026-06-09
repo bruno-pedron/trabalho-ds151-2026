@@ -63,27 +63,27 @@ export default function ExpenseDetailsScreen() {
 
   function handleEditExpense() {
 
-  router.replace({
-    pathname:
-      '/groups/[groupId]/expenses/[expense_id]/edit',
+    router.replace({
+      pathname:
+        '/groups/[groupId]/expenses/[expense_id]/edit',
 
-    params: {
-      groupId: String(groupId),
-      expense_id: String(expense_id),
-    },
-  });
-}
+      params: {
+        groupId: String(groupId),
+        expense_id: String(expense_id),
+      },
+    });
+  }
 
   function handleBack() {
 
     router.replace({
-    pathname:
-      '/groups/[groupId]/expenses',
+      pathname:
+        '/groups/[groupId]/expenses',
 
-    params: {
-      groupId: String(groupId)
-    },
-  });
+      params: {
+        groupId: String(groupId)
+      },
+    });
   }
 
   useEffect(() => {
@@ -101,9 +101,9 @@ export default function ExpenseDetailsScreen() {
 
         <ActivityIndicator size="large" />
 
-        <Text>
+        <ThemedText>
           Carregando despesa...
-        </Text>
+        </ThemedText>
 
       </SafeAreaView>
     );
@@ -114,15 +114,15 @@ export default function ExpenseDetailsScreen() {
       style={styles.container}
     >
 
-      <Text style={styles.title}>
+      <ThemedText style={styles.title}>
         Detalhes da Despesa
-      </Text>
+      </ThemedText>
 
       {
         errorMessage ? (
-          <Text style={styles.errorText}>
+          <ThemedText style={styles.errorText}>
             {errorMessage}
-          </Text>
+          </ThemedText>
         ) : null
       }
 
@@ -131,52 +131,52 @@ export default function ExpenseDetailsScreen() {
 
           <View style={styles.card}>
 
-            <Text style={styles.label}>
+            <ThemedText style={styles.label}>
               Descrição
-            </Text>
+            </ThemedText>
 
-            <Text style={styles.value}>
+            <ThemedText style={styles.value}>
               {expense.description}
-            </Text>
+            </ThemedText>
 
-            <Text style={styles.label}>
+            <ThemedText style={styles.label}>
               Valor
-            </Text>
+            </ThemedText>
 
-            <Text style={styles.value}>
+            <ThemedText style={styles.value}>
               R$ {
                 Number(
                   expense.amount
                 ).toFixed(2)
               }
-            </Text>
+            </ThemedText>
 
-            <Text style={styles.label}>
+            <ThemedText style={styles.label}>
               Pago por
-            </Text>
+            </ThemedText>
 
-            <Text style={styles.value}>
+            <ThemedText style={styles.value}>
               {
                 expense.users?.name ??
                 'Usuário'
               }
-            </Text>
+            </ThemedText>
 
-            <Text style={styles.label}>
+            <ThemedText style={styles.label}>
               Data
-            </Text>
+            </ThemedText>
 
-            <Text style={styles.value}>
+            <ThemedText style={styles.value}>
               {
                 new Date(
                   expense.created_at
                 ).toLocaleDateString()
               }
-            </Text>
+            </ThemedText>
 
-            <Text style={styles.label}>
+            <ThemedText style={styles.label}>
               Recibo
-            </Text>
+            </ThemedText>
 
             {receiptUri ? (
               <Pressable onPress={() => setIsReceiptOpen(true)} style={styles.receiptPreviewWrap}>
@@ -190,16 +190,16 @@ export default function ExpenseDetailsScreen() {
                 {imageLoading ? (
                   <View style={styles.imageLoadingOverlay}>
                     <ActivityIndicator size="small" />
-                    <Text style={styles.imageLoadingText}>
+                    <ThemedText style={styles.imageLoadingText}>
                       Carregando recibo...
-                    </Text>
+                    </ThemedText>
                   </View>
                 ) : null}
               </Pressable>
             ) : (
-              <Text style={styles.value}>
+              <ThemedText style={styles.value}>
                 Nenhum recibo anexado
-              </Text>
+              </ThemedText>
             )}
 
           </View>

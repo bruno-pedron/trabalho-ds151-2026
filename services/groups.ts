@@ -1,10 +1,7 @@
 import { supabase } from '@/supabase/supabase'
 
 
-export async function createGroup(
-  name: string,
-  userId: string
-) {
+export async function createGroup(name: string, userId: string) {
 
   const { data: group, error } = await supabase
     .from('groups')
@@ -32,13 +29,10 @@ export async function createGroup(
     console.log("failed at adding owner to the group");
     throw memberError
   }
-
   return group
 }
 
-export async function getUserGroups(
-  userId: string
-) {
+export async function getUserGroups(userId: string) {
 
   const { data, error } = await supabase
     .from('group_members')
@@ -53,17 +47,11 @@ export async function getUserGroups(
     `)
     .eq('user_id', userId)
 
-  if (error) {
-    throw error
-  }
-
+  if (error) throw error
   return data
 }
 
-export async function updateGroup(
-  groupId: string,
-  newName: string
-) {
+export async function updateGroup(groupId: string, newName: string) {
 
   const { data, error } = await supabase
     .from('groups')
@@ -74,25 +62,19 @@ export async function updateGroup(
     .select()
     .single()
 
-  if (error) {
-    throw error
-  }
-
+  if (error) throw error
   return data
 }
 
-export async function deleteGroup(
-  groupId: string
-) {
+export async function deleteGroup(groupId: string) {
 
   const { error } = await supabase
     .from('groups')
     .delete()
     .eq('id', groupId);
 
-  if (error) {
-    throw error;
-  }
+  if (error) throw error;
+
 }
 
 export async function getGroupMembers(groupId: string) {
@@ -108,10 +90,7 @@ export async function getGroupMembers(groupId: string) {
     `)
     .eq('group_id', groupId);
 
-  if (error) {
-    throw error;
-  }
-
+  if (error) throw error;
   return data;
 }
 
@@ -125,10 +104,7 @@ export async function getGroupDetails(groupId: string) {
     .eq('id', groupId)
     .single()
 
-  if (error) {
-    throw error;
-  }
-
+  if (error) throw error;
   return data
 }
 
@@ -137,8 +113,10 @@ export async function joinGroup(inviteCode: string, userId: string) {
   const { data: group, error: groupError } = await supabase
     .from('groups')
     .select('id')
-    .eq('invite_code', inviteCode)
+    .eq('invite_code', inviteCode.toUpperCase())
     .single();
+
+  if (group == null) return null;
 
   if (groupError) {
     throw new Error('Código de convite inválido ou grupo não encontrado.');
@@ -161,6 +139,20 @@ export async function joinGroup(inviteCode: string, userId: string) {
     }
     throw error;
   }
-
+  console.log("data:", data)
   return data
+}
+
+export async function removeFromGroup(groupId: string, userId: string) {
+
+  const { data, error } = await supabase
+    .from('group_members')
+    .delete()
+    .eq('group_id', groupId)
+    .eq('user_id', userId)
+
+  if (error) {
+    throw error;
+    throw new Error('Falha ao remover usuário do grupo')
+  }
 }
