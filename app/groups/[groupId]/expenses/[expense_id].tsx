@@ -3,10 +3,13 @@ import { Text, View, Button, StyleSheet, ActivityIndicator, Image, Modal, Pressa
 import { router, useLocalSearchParams } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { getExpenseById, getReceiptSignedUrl } from '@/services/expenses';
+import { ThemedText } from '@/components/themed-text';
+import { useAuth } from '@/hooks/useAuth';
 
 export default function ExpenseDetailsScreen() {
 
-  const {groupId, expense_id} = useLocalSearchParams();
+  const { groupId, expense_id } = useLocalSearchParams();
+  const { session } = useAuth();
   const [expense, setExpense] = useState<any>(null);
   const [loading, setLoading] = useState(false);
   const [imageLoading, setImageLoading] = useState(false);
@@ -203,14 +206,16 @@ export default function ExpenseDetailsScreen() {
         )
       }
 
-      <View style={styles.buttonContainer}>
-        <Button
-          title="Editar"
-          onPress={
-            handleEditExpense
-          }
-        />
-      </View>
+      {session?.user?.id && expense?.paid_by === session.user.id && (
+        <View style={styles.buttonContainer}>
+          <Button
+            title="Editar"
+            onPress={
+              handleEditExpense
+            }
+          />
+        </View>
+      )}
 
       <View style={styles.buttonContainer}>
         <Button

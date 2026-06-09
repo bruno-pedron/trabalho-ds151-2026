@@ -159,6 +159,35 @@ export async function updateExpense(
   return data;
 }
 
+export async function updateExpenseReceipt(
+  expenseId: string,
+  receiptUrl: string | null
+) {
+  const { data, error } = await supabase
+    .from('expenses')
+    .update({ receipt_url: receiptUrl })
+    .eq('id', expenseId)
+    .select()
+    .single();
+
+  if (error) {
+    throw error;
+  }
+
+  return data;
+}
+
+export async function deleteReceiptImage(filePath: string): Promise<void> {
+  const { error } = await supabase.storage
+    .from('receipts')
+    .remove([filePath]);
+
+  if (error) {
+    console.error('Erro ao remover imagem do storage:', error);
+    throw error;
+  }
+}
+
 export async function deleteExpense(
   expenseId: string
 ) {
