@@ -27,7 +27,8 @@ export default function ProfileScreen() {
 
   useEffect(() => {
     if (loggingOut) return;
-    getUsers();
+
+    if (currentUser) getUsers();
   }, [currentUser])
 
   const getUsers = async () => {

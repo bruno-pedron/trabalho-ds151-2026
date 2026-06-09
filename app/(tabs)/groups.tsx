@@ -96,7 +96,7 @@ export default function GroupsScreen() {
 
       const joinedGroup = await joinGroup(groupName.trim(), session.user.id);
       if (joinedGroup === null) {
-        setErrorMessage('Grupo não Encontrado. O código está correto?');
+        setErrorMessage('Grupo não Encontrado ou você já é membro. O código está correto?');
         return;
       }
 

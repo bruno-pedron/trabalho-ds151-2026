@@ -110,14 +110,14 @@ export async function getGroupDetails(groupId: string) {
 
 export async function joinGroup(inviteCode: string, userId: string) {
   //busca o grupo pelo código de convite
-  const { data: group, error: groupError } = await supabase
-    .from('groups')
-    .select('id')
-    .eq('invite_code', inviteCode.toUpperCase())
-    .single();
+  const { data: groupId, error: groupError } = await supabase
+    .rpc('get_group_by_invite', {
+      _invite_code: inviteCode
+    })
 
-  if (group == null) return null;
 
+  if (groupId == null) return null;
+    
   if (groupError) {
     throw new Error('Código de convite inválido ou grupo não encontrado.');
   }
@@ -126,7 +126,7 @@ export async function joinGroup(inviteCode: string, userId: string) {
   const { data, error } = await supabase
     .from('group_members')
     .insert({
-      group_id: group.id,
+      group_id: groupId,
       user_id: userId,
       role: 'member'
     })
@@ -134,10 +134,10 @@ export async function joinGroup(inviteCode: string, userId: string) {
     .single();
 
   if (error) {
-    if (error.code === '23505') {
-      throw new Error('Você já está neste grupo.');
+    if (error.code == "23505") {
+      console.log(error.message);
     }
-    throw error;
+    //throw error;
   }
   console.log("data:", data)
   return data
@@ -152,7 +152,6 @@ export async function removeFromGroup(groupId: string, userId: string) {
     .eq('user_id', userId)
 
   if (error) {
-    throw error;
     throw new Error('Falha ao remover usuário do grupo')
   }
 }
