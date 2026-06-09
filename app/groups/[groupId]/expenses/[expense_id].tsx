@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Text, View, Button, StyleSheet, ActivityIndicator, Image, Modal, Pressable } from 'react-native';
-import { router, useLocalSearchParams } from 'expo-router';
+import { router, Stack, useLocalSearchParams } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { getExpenseById, getReceiptSignedUrl } from '@/services/expenses';
 import { ThemedText } from '@/components/themed-text';
@@ -113,6 +113,12 @@ export default function ExpenseDetailsScreen() {
     <SafeAreaView
       style={styles.container}
     >
+      <Stack.Screen
+        options={{
+          title: 'Despesa',
+          headerBackTitle: 'Voltar',
+        }}
+      />
 
       <ThemedText style={styles.title}>
         Detalhes da Despesa

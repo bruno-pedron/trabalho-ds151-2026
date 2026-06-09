@@ -14,7 +14,7 @@ import {
 
 import { deleteGroup } from '@/services/groups';
 
-import { useLocalSearchParams, router } from 'expo-router';
+import { useLocalSearchParams, router, Stack } from 'expo-router';
 
 import { updateGroup } from '@/services/groups';
 
@@ -99,6 +99,12 @@ export default function EditGroupScreen() {
   return (
     <SafeAreaView style={styles.container}>
 
+      <Stack.Screen
+        options={{
+          title: 'Editar Grupo',
+          headerBackTitle: 'Voltar',
+        }}
+      />
       <Text style={styles.title}>
         Editar Grupo
       </Text>
